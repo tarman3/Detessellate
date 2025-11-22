@@ -9,6 +9,7 @@ command_specs = [
     ("MeshPlacement", "Commands.MeshPlacementCommand", "MeshPlacementCommand", "Detessellate Mesh"),
     ("MeshToBody", "Commands.MeshToBodyCommand", "MeshToBodyCommand", "Detessellate Mesh"),
     ("CoplanarSketch", "Commands.CoplanarSketchCommand", "CoplanarSketchCommand", "Detessellate Sketch"),
+    ("SketchReProfile", "Commands.SketchReProfileCommand", "SketchReProfileCommand", "Detessellate Sketch"),
 ]
 
 commands = {}
@@ -28,7 +29,7 @@ print("Detessellate workbench loaded")
 class DetessellateWorkbench(FreeCADGui.Workbench):
     MenuText = "Detessellate"
     ToolTip = "Tools to reverse engineer meshes"
-    Icon = "Detessellate.svg"
+    Icon = os.path.join(FreeCAD.getUserAppDataDir(), "Mod", "Detessellate", "Resources", "icons", "detessellate.svg")
 
     def Initialize(self):
         global commands
