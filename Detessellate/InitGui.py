@@ -12,6 +12,7 @@ command_specs = [
     ("CoplanarSketch", "Commands.CoplanarSketchCommand", "CoplanarSketchCommand", "Detessellate Sketch", True),
     ("EdgeLoopSelector", "Commands.EdgeLoopSelectorCommand", "EdgeLoopSelectorCommand", "Detessellate Utilities", True),
     ("TopoMatchSelector", "Commands.TopoMatchSelectorCommand", "TopoMatchSelectorCommand", "Detessellate Utilities", True),
+    ("VarSetUpdate", "Commands.VarSetUpdateCommand", "VarSetUpdateCommand", "Detessellate Utilities", True),
     ("CreateSketchToolbar", "Commands.CreateSketchToolbarCommand", "CreateSketchToolbarCommand", "Detessellate Sketch", False),  # Menu only
 ]
 
