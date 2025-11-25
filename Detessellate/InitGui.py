@@ -11,9 +11,11 @@ command_specs = [
     ("MeshToBody", "Commands.MeshToBodyCommand", "MeshToBodyCommand", "Detessellate Mesh", True),
     ("CoplanarSketch", "Commands.CoplanarSketchCommand", "CoplanarSketchCommand", "Detessellate Sketch", True),
     ("EdgeLoopSelector", "Commands.EdgeLoopSelectorCommand", "EdgeLoopSelectorCommand", "Detessellate Utilities", True),
-    ("TopoMatchSelector", "Commands.TopoMatchSelectorCommand", "TopoMatchSelectorCommand", "Detessellate Utilities", True),
+    ("TopoMatchSelector", "Commands.TopoMatchSelectorCommand", "TopoMatchSelectorCommand", "Detessellate Utilities", False),  # Menu only
     ("VarSetUpdate", "Commands.VarSetUpdateCommand", "VarSetUpdateCommand", "Detessellate Utilities", True),
     ("CreateSketchToolbar", "Commands.CreateSketchToolbarCommand", "CreateSketchToolbarCommand", "Detessellate Sketch", False),  # Menu only
+    ("CreatePartDesignToolbar", "Commands.CreatePartDesignToolbarCommand", "CreatePartDesignToolbarCommand", "Detessellate Utilities", False),  # Menu only
+    ("CreateGlobalToolbar", "Commands.CreateGlobalToolbarCommand", "CreateGlobalToolbarCommand", "Detessellate Utilities", False),  # Menu only
 ]
 
 commands = {}
@@ -54,9 +56,11 @@ class DetessellateWorkbench(FreeCADGui.Workbench):
             self.appendMenu("Detessellate", [cmd_name])
 
     def Activated(self):
-        # Auto-create sketch toolbar on first activation
+        # Auto-create toolbars on first activation
         if not self._toolbar_created:
             self._auto_create_sketch_toolbar()
+            self._auto_create_partdesign_toolbar()
+            self._auto_create_global_toolbar()
             self._toolbar_created = True
 
     def Deactivated(self):
@@ -72,5 +76,21 @@ class DetessellateWorkbench(FreeCADGui.Workbench):
             FreeCAD.Console.PrintWarning(f"Could not auto-create sketch toolbar: {e}\n")
             import traceback
             traceback.print_exc()
+
+    def _auto_create_partdesign_toolbar(self):
+        """Automatically create the PartDesign toolbar"""
+        try:
+            FreeCADGui.runCommand('CreatePartDesignToolbar')
+            FreeCAD.Console.PrintMessage("✓ Auto-created Detessellate PartDesign Tools toolbar\n")
+        except Exception as e:
+            FreeCAD.Console.PrintWarning(f"Could not auto-create PartDesign toolbar: {e}\n")
+
+    def _auto_create_global_toolbar(self):
+        """Automatically create the Global toolbar"""
+        try:
+            FreeCADGui.runCommand('CreateGlobalToolbar')
+            FreeCAD.Console.PrintMessage("✓ Auto-created Detessellate Global toolbar\n")
+        except Exception as e:
+            FreeCAD.Console.PrintWarning(f"Could not auto-create Global toolbar: {e}\n")
 
 FreeCADGui.addWorkbench(DetessellateWorkbench())
