@@ -1,10 +1,13 @@
+from pathlib import Path
+import sys
+
 import FreeCAD
 import FreeCADGui
 from PySide import QtGui, QtCore
-import os
-import sys
 
 class CreateGlobalToolbarCommand:
+    wb_path: Path = Path(__file__).parent.parent
+
     def GetResources(self):
         return {
             'Pixmap': '',  # No icon
@@ -52,16 +55,9 @@ class CreateGlobalToolbarCommand:
     def add_coplanar_sketch_button(self, toolbar):
         """Add CoplanarSketch button"""
         try:
-            macro_path = os.path.join(
-                FreeCAD.getUserAppDataDir(),
-                "Mod",
-                "Detessellate",
-                "Macros",
-                "CoplanarSketch"
-            )
-
-            icon_path = os.path.join(macro_path, "coplanarsketch.svg")
-            icon = QtGui.QIcon(icon_path) if os.path.exists(icon_path) else QtGui.QIcon()
+            macro_path = self.wb_path / "Macros" / "CoplanarSketch"
+            icon_path = macro_path / "CoplanarSketch.svg"
+            icon = QtGui.QIcon(str(icon_path))
 
             action = QtGui.QAction(icon, "Coplanar Sketch", toolbar)
             action.setToolTip("Create sketches coplanar to selected faces")
@@ -75,16 +71,9 @@ class CreateGlobalToolbarCommand:
     def add_edgeloop_selector_button(self, toolbar):
         """Add EdgeLoopSelector button"""
         try:
-            macro_path = os.path.join(
-                FreeCAD.getUserAppDataDir(),
-                "Mod",
-                "Detessellate",
-                "Macros",
-                "EdgeLoopSelector"
-            )
-
-            icon_path = os.path.join(macro_path, "edgeloopselector.svg")
-            icon = QtGui.QIcon(icon_path) if os.path.exists(icon_path) else QtGui.QIcon()
+            macro_path = self.wb_path / "Macros" / "EdgeLoopSelector"
+            icon_path = macro_path / "EdgeLoopSelector.svg"
+            icon = QtGui.QIcon(str(icon_path))
 
             action = QtGui.QAction(icon, "Edge Loop Selector", toolbar)
             action.setToolTip("Select connected edge loops")
@@ -98,16 +87,9 @@ class CreateGlobalToolbarCommand:
     def add_varset_update_button(self, toolbar):
         """Add VarSetUpdate button"""
         try:
-            macro_path = os.path.join(
-                FreeCAD.getUserAppDataDir(),
-                "Mod",
-                "Detessellate",
-                "Macros",
-                "VarSet-Update"
-            )
-
-            icon_path = os.path.join(macro_path, "varsetupdate.svg")
-            icon = QtGui.QIcon(icon_path) if os.path.exists(icon_path) else QtGui.QIcon()
+            macro_path = self.wb_path / "Macros" / "VarSet-Update"
+            icon_path = macro_path / "VarSetUpdate.svg"
+            icon = QtGui.QIcon(str(icon_path)) if icon_path.exists() else QtGui.QIcon()
 
             action = QtGui.QAction(icon, "VarSet Update", toolbar)
             action.setToolTip("Update variable sets in spreadsheet")
@@ -118,11 +100,11 @@ class CreateGlobalToolbarCommand:
         except Exception as e:
             FreeCAD.Console.PrintError(f"Error adding VarSetUpdate button: {e}\n")
 
-    def run_coplanar_sketch(self, macro_path):
+    def run_coplanar_sketch(self, macro_path: Path) -> None:
         """Directly run the CoplanarSketch macro"""
         try:
-            if macro_path not in sys.path:
-                sys.path.append(macro_path)
+            if str(macro_path) not in sys.path:
+                sys.path.append(str(macro_path))
 
             import importlib
             if 'CoplanarSketch' in sys.modules:
@@ -138,11 +120,11 @@ class CreateGlobalToolbarCommand:
             import traceback
             traceback.print_exc()
 
-    def run_edgeloop_selector(self, macro_path):
+    def run_edgeloop_selector(self, macro_path: Path) -> None:
         """Directly run the EdgeLoopSelector macro"""
         try:
-            if macro_path not in sys.path:
-                sys.path.append(macro_path)
+            if str(macro_path) not in sys.path:
+                sys.path.append(str(macro_path))
 
             import importlib
             if 'EdgeLoopSelector' in sys.modules:
@@ -158,11 +140,11 @@ class CreateGlobalToolbarCommand:
             import traceback
             traceback.print_exc()
 
-    def run_varset_update(self, macro_path):
+    def run_varset_update(self, macro_path: Path) -> None:
         """Directly run the VarSetUpdate macro"""
         try:
-            if macro_path not in sys.path:
-                sys.path.append(macro_path)
+            if str(macro_path) not in sys.path:
+                sys.path.append(str(macro_path))
 
             import importlib
             if 'VarSetUpdate' in sys.modules:

@@ -1,10 +1,13 @@
+from pathlib import Path
+import sys
+
 import FreeCAD
 import FreeCADGui
 from PySide import QtGui, QtCore
-import os
-import sys
 
 class CreatePartDesignToolbarCommand:
+    wb_path: Path = Path(__file__).parent.parent
+
     def GetResources(self):
         return {
             'Pixmap': '',  # No icon
@@ -80,16 +83,9 @@ class CreatePartDesignToolbarCommand:
     def add_topomatch_selector_button(self, toolbar):
         """Add TopoMatchSelector button that directly calls the macro"""
         try:
-            macro_path = os.path.join(
-                FreeCAD.getUserAppDataDir(),
-                "Mod",
-                "Detessellate",
-                "Macros",
-                "TopoMatchSelector"
-            )
-
-            icon_path = os.path.join(macro_path, "topomatchselector.svg")
-            icon = QtGui.QIcon(icon_path) if os.path.exists(icon_path) else QtGui.QIcon()
+            macro_path = self.wb_path / "Macros" / "TopoMatchSelector"
+            icon_path = macro_path / "TopoMatchSelector.svg"
+            icon = QtGui.QIcon(str(icon_path))
 
             action = QtGui.QAction(icon, "Topo Match Selector", toolbar)
             action.setToolTip("Select topology matching elements")
@@ -100,11 +96,11 @@ class CreatePartDesignToolbarCommand:
         except Exception as e:
             FreeCAD.Console.PrintError(f"Error adding TopoMatchSelector button: {e}\n")
 
-    def run_topomatch_selector(self, macro_path):
+    def run_topomatch_selector(self, macro_path: Path) -> None:
         """Directly run the TopoMatchSelector macro"""
         try:
-            if macro_path not in sys.path:
-                sys.path.append(macro_path)
+            if str(macro_path) not in sys.path:
+                sys.path.append(str(macro_path))
 
             import importlib
             if 'TopoMatchSelector' in sys.modules:
