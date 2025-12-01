@@ -36,10 +36,10 @@ class CreateGlobalToolbarCommand:
             custom_toolbar.setObjectName(toolbar_name)
             mw.addToolBar(QtCore.Qt.TopToolBarArea, custom_toolbar)
 
-            # Add buttons - these tools work in any workbench
-            self.add_coplanar_sketch_button(custom_toolbar)
-            self.add_edgeloop_selector_button(custom_toolbar)
-            self.add_varset_update_button(custom_toolbar)
+            # Add buttons using registered commands - gets proper tooltips automatically
+            self.add_command_button(custom_toolbar, "Detessellate_CoplanarSketch")
+            self.add_command_button(custom_toolbar, "Detessellate_EdgeLoopSelector")
+            self.add_command_button(custom_toolbar, "Detessellate_VarSetUpdate")
 
             # No workbench toggle needed - always visible
             custom_toolbar.setVisible(True)
@@ -52,111 +52,22 @@ class CreateGlobalToolbarCommand:
             import traceback
             traceback.print_exc()
 
-    def add_coplanar_sketch_button(self, toolbar):
-        """Add CoplanarSketch button"""
+    def add_command_button(self, toolbar, command_name):
+        """Add a button using the registered FreeCAD command"""
         try:
-            macro_path = self.wb_path / "Macros" / "CoplanarSketch"
-            icon_path = macro_path / "CoplanarSketch.svg"
-            icon = QtGui.QIcon(str(icon_path))
+            mw = FreeCADGui.getMainWindow()
 
-            action = QtGui.QAction(icon, "Coplanar Sketch", toolbar)
-            action.setToolTip("Create sketches coplanar to selected faces")
-            action.triggered.connect(lambda: self.run_coplanar_sketch(macro_path))
+            # Find the action created by FreeCAD when command was registered
+            for action in mw.findChildren(QtGui.QAction):
+                if action.objectName() == command_name:
+                    toolbar.addAction(action)
+                    FreeCAD.Console.PrintMessage(f"✓ Added {command_name} button\n")
+                    return
 
-            toolbar.addAction(action)
+            FreeCAD.Console.PrintWarning(f"Could not find {command_name} action\n")
 
         except Exception as e:
-            FreeCAD.Console.PrintError(f"Error adding CoplanarSketch button: {e}\n")
-
-    def add_edgeloop_selector_button(self, toolbar):
-        """Add EdgeLoopSelector button"""
-        try:
-            macro_path = self.wb_path / "Macros" / "EdgeLoopSelector"
-            icon_path = macro_path / "EdgeLoopSelector.svg"
-            icon = QtGui.QIcon(str(icon_path))
-
-            action = QtGui.QAction(icon, "Edge Loop Selector", toolbar)
-            action.setToolTip("Select connected edge loops")
-            action.triggered.connect(lambda: self.run_edgeloop_selector(macro_path))
-
-            toolbar.addAction(action)
-
-        except Exception as e:
-            FreeCAD.Console.PrintError(f"Error adding EdgeLoopSelector button: {e}\n")
-
-    def add_varset_update_button(self, toolbar):
-        """Add VarSetUpdate button"""
-        try:
-            macro_path = self.wb_path / "Macros" / "VarSet-Update"
-            icon_path = macro_path / "VarSetUpdate.svg"
-            icon = QtGui.QIcon(str(icon_path)) if icon_path.exists() else QtGui.QIcon()
-
-            action = QtGui.QAction(icon, "VarSet Update", toolbar)
-            action.setToolTip("Update variable sets in spreadsheet")
-            action.triggered.connect(lambda: self.run_varset_update(macro_path))
-
-            toolbar.addAction(action)
-
-        except Exception as e:
-            FreeCAD.Console.PrintError(f"Error adding VarSetUpdate button: {e}\n")
-
-    def run_coplanar_sketch(self, macro_path: Path) -> None:
-        """Directly run the CoplanarSketch macro"""
-        try:
-            if str(macro_path) not in sys.path:
-                sys.path.append(str(macro_path))
-
-            import importlib
-            if 'CoplanarSketch' in sys.modules:
-                import CoplanarSketch
-                importlib.reload(CoplanarSketch)
-            else:
-                import CoplanarSketch
-
-            # Macro creates dock widget on import
-
-        except Exception as e:
-            FreeCAD.Console.PrintError(f"Error running CoplanarSketch: {e}\n")
-            import traceback
-            traceback.print_exc()
-
-    def run_edgeloop_selector(self, macro_path: Path) -> None:
-        """Directly run the EdgeLoopSelector macro"""
-        try:
-            if str(macro_path) not in sys.path:
-                sys.path.append(str(macro_path))
-
-            import importlib
-            if 'EdgeLoopSelector' in sys.modules:
-                import EdgeLoopSelector
-                importlib.reload(EdgeLoopSelector)
-            else:
-                import EdgeLoopSelector
-
-            # Call appropriate function - adjust once you share the macro
-
-        except Exception as e:
-            FreeCAD.Console.PrintError(f"Error running EdgeLoopSelector: {e}\n")
-            import traceback
-            traceback.print_exc()
-
-    def run_varset_update(self, macro_path: Path) -> None:
-        """Directly run the VarSetUpdate macro"""
-        try:
-            if str(macro_path) not in sys.path:
-                sys.path.append(str(macro_path))
-
-            import importlib
-            if 'VarSetUpdate' in sys.modules:
-                import VarSetUpdate
-                importlib.reload(VarSetUpdate)
-            else:
-                import VarSetUpdate
-
-            # Call appropriate function - adjust once you share the macro
-
-        except Exception as e:
-            FreeCAD.Console.PrintError(f"Error running VarSetUpdate: {e}\n")
+            FreeCAD.Console.PrintError(f"Error adding {command_name} button: {e}\n")
             import traceback
             traceback.print_exc()
 
