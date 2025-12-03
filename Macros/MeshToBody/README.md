@@ -8,7 +8,7 @@ Version **2.0** introduces a unified workflow with improved report messaging and
 
 **Do not push changes directly to this repo** — they will be overwritten on the next sync.
 
-To contribute, make changes in the Detessellate repo under `Macros/CoplanarSketch/`.
+To contribute, make changes in the Detessellate repo under `Macros/MeshToBody/`.
 
 📺 Click the image below to watch the demo video on YouTube
 
