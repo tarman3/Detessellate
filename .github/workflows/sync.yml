@@ -38,14 +38,14 @@ jobs:
           - name: SketcherWireDoctor
             path: Macros/SketcherWireDoctor
             repo: SketcherWireDoctor
-    
+
     steps:
       - name: Checkout Detessellate
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.PAT_TOKEN }}
-      
+          # Default GITHUB_TOKEN is fine for reading this repo
+
       - name: Check if macro changed
         id: changed
         run: |
@@ -54,13 +54,15 @@ jobs:
           else
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
-      
-      - name: Set up Git
+
+      - name: Checkout satellite repo
         if: steps.changed.outputs.changed == 'true'
-        run: |
-          git config --global user.name "Detessellate Sync Bot"
-          git config --global user.email "actions@github.com"
-      
+        uses: actions/checkout@v4
+        with:
+          repository: DesignWeaver3D/${{ matrix.macro.repo }}
+          token: ${{ secrets.PAT_TOKEN }}
+          path: satellite-repo
+
       - name: Sync ${{ matrix.macro.name }}
         if: steps.changed.outputs.changed == 'true'
         run: |
@@ -69,16 +71,25 @@ jobs:
           echo "Source path: ${{ matrix.macro.path }}"
           echo "Target repo: DesignWeaver3D/${{ matrix.macro.repo }}"
           echo "================================================"
-          
-          BRANCH_NAME="sync-${{ matrix.macro.name }}"
-          
-          echo "Creating subtree split from ${{ matrix.macro.path }}..."
-          git subtree split --prefix=${{ matrix.macro.path }} -b $BRANCH_NAME
-          
-          echo "Pushing to ${{ matrix.macro.repo }}:main..."
-          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/DesignWeaver3D/${{ matrix.macro.repo }}.git $BRANCH_NAME:main --force
-          
-          echo "Cleaning up temporary branch $BRANCH_NAME..."
-          git branch -D $BRANCH_NAME || true
-          
-          echo "✓ Sync complete for ${{ matrix.macro.name }}"
+
+          cd satellite-repo
+
+          # Remove old content (except .git)
+          find . -maxdepth 1 ! -name '.git' ! -name '.' -exec rm -rf {} +
+
+          # Copy new content from macro folder (robust against empty dirs)
+          rsync -av --delete ../${{ matrix.macro.path }}/ .
+
+          # Configure git
+          git config user.name "Detessellate Sync Bot"
+          git config user.email "actions@github.com"
+
+          # Commit and push changes
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Sync from Detessellate @ ${{ github.sha }}"
+            git push origin main --force
+            echo "✓ Sync complete for ${{ matrix.macro.name }}"
+          fi
