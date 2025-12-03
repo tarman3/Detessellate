@@ -2,6 +2,12 @@
 
 <img width="128" height="128" alt="CoplanarSketch" src="https://github.com/user-attachments/assets/a941d04a-1707-400b-bd9c-d0751c8ea021" />
 
+## ⚠️ **This repository is automatically synced from [Detessellate](https://github.com/DesignWeaver3D/Detessellate).**
+
+**Do not push changes directly to this repo** — they will be overwritten on the next sync.
+
+To contribute, make changes in the Detessellate repo under `Macros/CoplanarSketch/`.
+
 Forum Post: https://forum.freecad.org/viewtopic.php?p=830918#p830918
 
 ## Overview
