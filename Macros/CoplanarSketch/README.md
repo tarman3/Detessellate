@@ -4,12 +4,6 @@
 
 The `CoplanarSketch` FreeCAD macro is a powerful tool designed to streamline the creation of sketches from existing 3D geometry, specifically focusing on **coplanar edges** found on tessellated solid bodies such as those converted from Mesh objects imported from STL files. It automates the process of identifying and selecting edges that lie on the same plane, then generates a new sketch containing these edges as construction geometry, correctly oriented in space.
 
-## ⚠️ **This repository is automatically synced from [Detessellate](https://github.com/DesignWeaver3D/Detessellate).**
-
-**Do not push changes directly to this repo** — they will be overwritten on the next sync.
-
-To contribute, make changes in the Detessellate repo under `Macros/CoplanarSketch/`.
-
 Forum Post: https://forum.freecad.org/viewtopic.php?p=830918#p830918
 
 ![image](https://github.com/user-attachments/assets/88df8cf1-5ee3-4aa6-868f-9386a0d87e94)
@@ -25,7 +19,8 @@ Forum Post: https://forum.freecad.org/viewtopic.php?p=830918#p830918
 * **User-Friendly Interface**: Provides a dockable GUI panel within FreeCAD with a guided user experience for easy access to its functionalities.
 * **Degenerate Edge Detection**: Detects degenerate edges in non-solid shape objects and provides a means to create a clean shape by copying non-degenerate faces and omitting degenerate faces and edges.
 
-## How to Use
+## Alternative Installation
+This macro is bundled with the Detessellate Workbench, but can also be manually installed separately.
 
 1.  **Installation**:
     * Save the `CoplanarSketch.py` file into your FreeCAD Macros directory. You can find this directory by going to `Macros -> Macros...` in FreeCAD and checking the "User macros location" path.
