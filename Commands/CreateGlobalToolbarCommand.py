@@ -39,6 +39,7 @@ class CreateGlobalToolbarCommand:
             # Add buttons using registered commands - gets proper tooltips automatically
             self.add_command_button(custom_toolbar, "Detessellate_CoplanarSketch")
             self.add_command_button(custom_toolbar, "Detessellate_EdgeLoopSelector")
+            self.add_command_button(custom_toolbar, "Detessellate_EdgeLoopToSketch")
             self.add_command_button(custom_toolbar, "Detessellate_VarSetUpdate")
 
             # No workbench toggle needed - always visible
