@@ -20,9 +20,10 @@ Finds problems automatically and assists the user in fixing them through a 4-tab
 - Safe operations with rollback (transaction-enabled undo enries)
 - Works with B-splines and complex sketches
 
-## Installation
+## Alternative Installation
+This macro is bundled with the Detessellate Workbench, but can also be manually installed separately.
 
-1. Download all 5 files to your FreeCAD macro directory.
+1. Download all 5 py files into your FreeCAD macro directory.
 2. Run `SketcherWireDoctor_Main.py`.
 3. Optionally, download the icon for use in custom toolbar in Sketcher workbench.
 
