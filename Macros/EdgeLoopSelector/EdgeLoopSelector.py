@@ -68,6 +68,110 @@ def select_connected_loop_or_sketch():
         FreeCAD.Console.PrintMessage(f"Selected {len(all_edges_to_select)} edges from {len(selected_faces)} face(s).\n")
         return
 
+    # --- Handle objects with Wires but no Faces (e.g., SubShapeBinder from sketch) ---
+    if len(obj.Shape.Faces) == 0 and len(obj.Shape.Wires) > 0:
+        selected_edge_indices = []
+        for sel_ex in selection:
+            if sel_ex.Object.Name != obj.Name:
+                FreeCAD.Console.PrintError("Error: Please select edges from only one object.\n")
+                return
+            for edge_name in sel_ex.SubElementNames:
+                if edge_name.startswith("Edge"):
+                    edge_idx = int(edge_name[4:]) - 1
+                    selected_edge_indices.append(edge_idx)
+
+        if not selected_edge_indices:
+            FreeCAD.Console.PrintError("Error: No valid edges were selected.\n")
+            return
+
+        selected_edge_objects = [all_obj_edges[i] for i in selected_edge_indices]
+        
+        # Find which wires contain the selected edges
+        tolerance = 1e-6
+        wires_to_select = set()
+        
+        for edge_idx in selected_edge_indices:
+            selected_edge = all_obj_edges[edge_idx]
+            for wire in obj.Shape.Wires:
+                # Check if this edge is in this wire
+                for wire_edge in wire.Edges:
+                    if wire_edge.isSame(selected_edge):
+                        wires_to_select.add(wire)
+                        break
+        
+        if not wires_to_select:
+            FreeCAD.Console.PrintError("Error: Could not find wires containing the selected edges.\n")
+            return
+        
+        # Collect all edge indices from selected wires
+        all_edges_to_select = set()
+        for wire in wires_to_select:
+            for wire_edge in wire.Edges:
+                for idx, original_edge in enumerate(all_obj_edges):
+                    if original_edge.isSame(wire_edge):
+                        all_edges_to_select.add(idx)
+                        break
+        
+        # Select all edges
+        FreeCADGui.Selection.clearSelection()
+        for idx in sorted(all_edges_to_select):
+            FreeCADGui.Selection.addSelection(obj, f"Edge{idx+1}")
+        
+        # Perform coplanarity check AFTER selection for warning purposes
+        if len(wires_to_select) > 1:
+            # Collect all points from all selected wires
+            all_wire_points = []
+            for wire in wires_to_select:
+                for edge in wire.Edges:
+                    for vertex in edge.Vertexes:
+                        all_wire_points.append(vertex.Point)
+                    # Sample additional points for circular edges
+                    for param in [0.25, 0.5, 0.75]:
+                        try:
+                            pt = edge.valueAt(edge.FirstParameter + param * (edge.LastParameter - edge.FirstParameter))
+                            all_wire_points.append(pt)
+                        except:
+                            pass
+            
+            # Try to find a plane from all wire points
+            unique_points = []
+            for pt in all_wire_points:
+                if not any(pt.isEqual(existing, tolerance) for existing in unique_points):
+                    unique_points.append(pt)
+                    if len(unique_points) >= 100:  # Limit for performance
+                        break
+            
+            plane_normal = None
+            plane_point = None
+            
+            if len(unique_points) >= 3:
+                plane_point = unique_points[0]
+                for i in range(1, len(unique_points)):
+                    v1 = unique_points[i] - plane_point
+                    for j in range(i + 1, len(unique_points)):
+                        v2 = unique_points[j] - plane_point
+                        cross = v1.cross(v2)
+                        if cross.Length > tolerance:
+                            plane_normal = cross.normalize()
+                            break
+                    if plane_normal:
+                        break
+            
+            # Check if all wires are coplanar
+            if plane_normal:
+                all_coplanar = True
+                for pt in all_wire_points:
+                    distance = abs((pt - plane_point).dot(plane_normal))
+                    if distance > tolerance:
+                        all_coplanar = False
+                        break
+                
+                if not all_coplanar:
+                    FreeCAD.Console.PrintWarning(f"Warning: Selected wires are not coplanar.\n")
+        
+        FreeCAD.Console.PrintMessage(f"Selected {len(all_edges_to_select)} edges from {len(wires_to_select)} wire(s).\n")
+        return
+
     # --- Handle Sketches in 3D view ---
     if obj.TypeId.startswith("Sketcher::SketchObject"):
         selected_indices = []
