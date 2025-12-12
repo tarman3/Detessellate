@@ -2,7 +2,7 @@
 
 <img width="64" height="64" alt="MeshPlacement" src="https://github.com/user-attachments/assets/57233128-99af-42cd-b23f-17bc44b23b97" />
 
-A FreeCAD macro to position one or more selected meshes at the global origin based on their bounding box.  
+A FreeCAD macro to position one or more selected meshes or solids at the global origin based on their bounding box.  
 This tool provides a dock widget with intuitive buttons to **center** or **align** meshes along X, Y, Z axes (or combinations like XY, XYZ). It works on single or multiple selected meshes, with undo safety and a clean UI layout.
 
 <img width="1228" height="800" alt="image" src="https://github.com/user-attachments/assets/a15c7244-2c3f-4190-8c75-4178c0d279d4" />
@@ -10,17 +10,17 @@ This tool provides a dock widget with intuitive buttons to **center** or **align
 ---
 
 ## ✨ Features
-- Center meshes at the origin:
+- Center meshes & solids at the origin:
   - Center XYZ (bounding box center)
   - Center XY (retains current Z-position)
   - Center X
   - Center Y
   - Center Z
-- Align meshes to bounding box planes:
+- Align meshes & solids to bounding box planes:
   - Align Top / Bottom
   - Align Left / Right
   - Align Front / Back
-- Works on **one or many selected meshes** at once.
+- Works on **one or many selected meshes or solids** at once.
 - Undo/redo safety: each action is wrapped in a FreeCAD transaction.
 - Dock widget UI with grouped controls for clarity.
 
@@ -38,9 +38,9 @@ This macro is bundled with the Detessellate Workbench, but can also be manually 
 ---
 
 ## 🛠 Usage
-1. Select one or more mesh objects from the Model Tree.
-2. Run the macro via `Macro > Macros... > MeshPlacement.py > Execute`
-3. Use the dock widget buttons to center or align them.
+1. Select one or more mesh or solid objects from the Model Tree.
+2. Run the macro via MeshPlacement button or Detessellate > MeshPlacement.
+3. Use the dock widget buttons to center or align them to the origin via bounding box centers or bounds.
 4. Each action is undoable via **Edit → Undo**.
 
 ---
@@ -59,4 +59,5 @@ You are free to use, modify, and distribute it under the terms of the license.
 
 ## 📜 Changelog
 
-- v1.0.0 – 2025.11.21  Initial release of **MeshPlacement** macro.
+- **v1.1.0** (2025.12.11)  Added support for imported STEP file solids (Part::Feature)
+- **v1.0.0** (2025.11.21)  Initial release of **MeshPlacement** macro.
