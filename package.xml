@@ -11,7 +11,7 @@
 
   <maintainer email="designweaver3d@gmail.com">DesignWeaver3D</maintainer>
 
-  <license file="LICENSE">GPLv3</license>
+  <license file="LICENSE">GPL-3.0</license>
 
   <url branch="main" type="repository">https://github.com/DesignWeaver3D/Detessellate</url>
 
