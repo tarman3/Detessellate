@@ -220,7 +220,11 @@ class UpdateVarSetDialog(QtGui.QDialog):
             try:
                 user_string = getattr(varset, selected_property, None)  # Access the property directly
                 if hasattr(user_string, "UserString"):
+                    # For types with units (Length, Angle, Distance, etc.)
                     self.user_string_value.setText(user_string.UserString if user_string.UserString else "None")
+                elif user_string is not None:
+                    # For simple types without units (Bool, Float, Integer, String, Percent)
+                    self.user_string_value.setText(str(user_string))
                 else:
                     self.user_string_value.setText("None")
             except AttributeError:
@@ -394,8 +398,33 @@ class UpdateVarSetDialog(QtGui.QDialog):
 
                     # Recreate the property
                     varset.addProperty(selected_type, new_name, group_name, self.tooltip_input.text())
-                    setattr(varset, new_name, old_value)  # Assign the old value to the new property
-                    self.results_text.append(f"Created property '{new_name}' with type '{selected_type}' in group '{group_name}' and value '{old_value}'.\n")
+
+                    # Type conversion based on property type
+                    try:
+                        if selected_type == "App::PropertyBool":
+                            if isinstance(old_value, bool):
+                                old_value = old_value
+                            elif isinstance(old_value, str):
+                                old_value = old_value.lower() in ('true', '1', 'yes', 'y', 'on', 'enable', 'enabled')
+                            else:
+                                old_value = bool(old_value)
+
+                        elif selected_type in ["App::PropertyFloat", "App::PropertyAngle",
+                                               "App::PropertyDistance", "App::PropertyLength",
+                                               "App::PropertyPercent", "App::PropertyQuantity"]:
+                            old_value = float(old_value)
+
+                        elif selected_type == "App::PropertyInteger":
+                            old_value = int(old_value)
+
+                        elif selected_type == "App::PropertyString":
+                            old_value = str(old_value)
+
+                        setattr(varset, new_name, old_value)
+                        self.results_text.append(f"Created property '{new_name}' with type '{selected_type}' in group '{group_name}' and value '{old_value}'.\n")
+
+                    except (ValueError, AttributeError, TypeError) as e:
+                        self.results_text.append(f"Error: Could not convert value '{old_value}' to type '{selected_type}': {e}\n")
 
                     # Recompute the document to ensure the new property is recognized
                     doc.recompute()
