@@ -48,14 +48,17 @@ This macro is bundled with the Detessellate Workbench, but can also be manually 
 3. Launch FreeCAD and run the macro from the Macro menu.
 
 ## Acknowledgments
-- **Original Author**: Mathias L. ([GitHub Profile](https://github.com/mathiaslec))  
+- **Original Author**: [Mathias L.](https://github.com/mathiaslec)
   Initial concept and implementation of `VarSetUpdate` (v0.1).
-- **Contributor**: [DesignWeaver](https://forum.freecad.org/memberlist.php?mode=viewprofile&u=80381&sid=658045436126114983df20117ee27bf5) (NSUBB)  
+- **Contributor**: [DesignWeaver3D](https://github.com/DesignWeaver3D) (Formerly NSUBB)  
   Significant enhancements and feature extensions (v0.3.14).
+- **Contributor**: [VeryOldBeard](https://github.com/VeryOldBeard)
 
 ## License
-This project is distributed under the **CNU CPL v3.0**. See the LICENSE file for details.
+This project is distributed under the **GNU GPL v3.0**. See the LICENSE file for details.
 
----
-
-For any issues or feature requests, please feel free to open an issue or contribute to the project.
+## 📜 Changelog
+- **v0.3.16** (2025-12-23) - Modified by OldBeard & DesignWeaver3D. Add data type conversion when changing property type. Fixed display of Current Value for unitless properties that don't have user_string attribute.
+- **v0.3.15** (2025-11-22) - Modified by OldBeard to solve the problem of replace being applied on partial matches and to add more supported property types
+- **v0.3.14** (2025-4-24) - Modified by DesignWeaver3D (formerly NSUBB) to add many additional features.
+- **v0.1.3** (2025‑03-26) - Original version by Mathias L. posted to https://github.com/FreeCAD/FreeCAD/issues/16222#issuecomment-2754714033
