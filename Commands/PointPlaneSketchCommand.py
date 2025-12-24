@@ -27,8 +27,8 @@ class PointPlaneSketchCommand:
             else:
                 import PointPlaneSketch
 
-            # The macro will execute on import or call the appropriate function
-            # Adjust based on how PointPlaneSketch.py is structured
+            # Execute the show function from the macro
+            PointPlaneSketch.show_point_cloud_plane_sketch()
 
         except Exception as e:
             FreeCAD.Console.PrintError(f"Error running PointPlaneSketch: {e}\n")
